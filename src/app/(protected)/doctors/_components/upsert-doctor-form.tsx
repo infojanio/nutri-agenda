@@ -1,20 +1,20 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useAction } from "next-safe-action/hooks";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { NumericFormat } from "react-number-format";
-import { toast } from "sonner";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useAction } from 'next-safe-action/hooks'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { NumericFormat } from 'react-number-format'
+import { toast } from 'sonner'
+import { z } from 'zod'
 
-import { upsertDoctor } from "@/actions/upsert-doctor";
-import { Button } from "@/components/ui/button";
+import { upsertDoctor } from '@/actions/upsert-doctor'
+import { Button } from '@/components/ui/button'
 import {
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -22,8 +22,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -32,46 +32,46 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { doctorsTable } from "@/db/schema";
+} from '@/components/ui/select'
+import { doctorsTable } from '@/db/schema'
 
-import { medicalSpecialties } from "../_constants";
+import { medicalSpecialties } from '../_constants'
 
 const formSchema = z
   .object({
     name: z.string().trim().min(1, {
-      message: "Nome é obrigatório.",
+      message: 'Nome é obrigatório.',
     }),
     specialty: z.string().trim().min(1, {
-      message: "Especialidade é obrigatória.",
+      message: 'Especialidade é obrigatória.',
     }),
     appointmentPrice: z.number().min(1, {
-      message: "Preço da consulta é obrigatório.",
+      message: 'Preço da consulta é obrigatório.',
     }),
     availableFromWeekDay: z.string(),
     availableToWeekDay: z.string(),
     availableFromTime: z.string().min(1, {
-      message: "Hora de início é obrigatória.",
+      message: 'Hora de início é obrigatória.',
     }),
     availableToTime: z.string().min(1, {
-      message: "Hora de término é obrigatória.",
+      message: 'Hora de término é obrigatória.',
     }),
   })
   .refine(
     (data) => {
-      return data.availableFromTime < data.availableToTime;
+      return data.availableFromTime < data.availableToTime
     },
     {
       message:
-        "O horário de início não pode ser anterior ao horário de término.",
-      path: ["availableToTime"],
+        'O horário de início não pode ser anterior ao horário de término.',
+      path: ['availableToTime'],
     },
-  );
+  )
 
 interface UpsertDoctorFormProps {
-  isOpen: boolean;
-  doctor?: typeof doctorsTable.$inferSelect;
-  onSuccess?: () => void;
+  isOpen: boolean
+  doctor?: typeof doctorsTable.$inferSelect
+  onSuccess?: () => void
 }
 
 const UpsertDoctorForm = ({
@@ -83,43 +83,43 @@ const UpsertDoctorForm = ({
     shouldUnregister: true,
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: doctor?.name ?? "",
-      specialty: doctor?.specialty ?? "",
+      name: doctor?.name ?? '',
+      specialty: doctor?.specialty ?? '',
       appointmentPrice: doctor?.appointmentPriceInCents
         ? doctor.appointmentPriceInCents / 100
         : 0,
-      availableFromWeekDay: doctor?.availableFromWeekDay?.toString() ?? "1",
-      availableToWeekDay: doctor?.availableToWeekDay?.toString() ?? "5",
-      availableFromTime: doctor?.availableFromTime ?? "",
-      availableToTime: doctor?.availableToTime ?? "",
+      availableFromWeekDay: doctor?.availableFromWeekDay?.toString() ?? '1',
+      availableToWeekDay: doctor?.availableToWeekDay?.toString() ?? '5',
+      availableFromTime: doctor?.availableFromTime ?? '',
+      availableToTime: doctor?.availableToTime ?? '',
     },
-  });
+  })
 
   useEffect(() => {
     if (isOpen) {
       form.reset({
-        name: doctor?.name ?? "",
-        specialty: doctor?.specialty ?? "",
+        name: doctor?.name ?? '',
+        specialty: doctor?.specialty ?? '',
         appointmentPrice: doctor?.appointmentPriceInCents
           ? doctor.appointmentPriceInCents / 100
           : 0,
-        availableFromWeekDay: doctor?.availableFromWeekDay?.toString() ?? "1",
-        availableToWeekDay: doctor?.availableToWeekDay?.toString() ?? "5",
-        availableFromTime: doctor?.availableFromTime ?? "",
-        availableToTime: doctor?.availableToTime ?? "",
-      });
+        availableFromWeekDay: doctor?.availableFromWeekDay?.toString() ?? '1',
+        availableToWeekDay: doctor?.availableToWeekDay?.toString() ?? '5',
+        availableFromTime: doctor?.availableFromTime ?? '',
+        availableToTime: doctor?.availableToTime ?? '',
+      })
     }
-  }, [isOpen, form, doctor]);
+  }, [isOpen, form, doctor])
 
   const upsertDoctorAction = useAction(upsertDoctor, {
     onSuccess: () => {
-      toast.success("Médico adicionado com sucesso.");
-      onSuccess?.();
+      toast.success('Profissional adicionado com sucesso.')
+      onSuccess?.()
     },
     onError: () => {
-      toast.error("Erro ao adicionar médico.");
+      toast.error('Erro ao adicionar profissional.')
     },
-  });
+  })
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     upsertDoctorAction.execute({
@@ -128,17 +128,19 @@ const UpsertDoctorForm = ({
       availableFromWeekDay: parseInt(values.availableFromWeekDay),
       availableToWeekDay: parseInt(values.availableToWeekDay),
       appointmentPriceInCents: values.appointmentPrice * 100,
-    });
-  };
+    })
+  }
 
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>{doctor ? doctor.name : "Adicionar médico"}</DialogTitle>
+        <DialogTitle>
+          {doctor ? doctor.name : 'Adicionar profissional'}
+        </DialogTitle>
         <DialogDescription>
           {doctor
-            ? "Edite as informações desse médico."
-            : "Adicione um novo médico."}
+            ? 'Edite as informações desse profissional.'
+            : 'Adicione um novo profissional.'}
         </DialogDescription>
       </DialogHeader>
       <Form {...form}>
@@ -192,7 +194,7 @@ const UpsertDoctorForm = ({
                 <NumericFormat
                   value={field.value}
                   onValueChange={(value) => {
-                    field.onChange(value.floatValue);
+                    field.onChange(value.floatValue)
                   }}
                   decimalScale={2}
                   fixedDecimalScale
@@ -406,16 +408,16 @@ const UpsertDoctorForm = ({
           <DialogFooter>
             <Button type="submit" disabled={upsertDoctorAction.isPending}>
               {upsertDoctorAction.isPending
-                ? "Salvando..."
+                ? 'Salvando...'
                 : doctor
-                  ? "Salvar"
-                  : "Adicionar"}
+                ? 'Salvar'
+                : 'Adicionar'}
             </Button>
           </DialogFooter>
         </form>
       </Form>
     </DialogContent>
-  );
-};
+  )
+}
 
-export default UpsertDoctorForm;
+export default UpsertDoctorForm

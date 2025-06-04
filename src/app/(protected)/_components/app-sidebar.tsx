@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   CalendarDays,
@@ -8,18 +8,18 @@ import {
   LogOut,
   Stethoscope,
   UsersRound,
-} from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+} from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu'
 import {
   Sidebar,
   SidebarContent,
@@ -31,50 +31,50 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { authClient } from "@/lib/auth-client";
+} from '@/components/ui/sidebar'
+import { authClient } from '@/lib/auth-client'
 
 const items = [
   {
-    title: "Dashboard",
-    url: "/dashboard",
+    title: 'Dashboard',
+    url: '/dashboard',
     icon: LayoutDashboard,
   },
   {
-    title: "Agendamentos",
-    url: "/appointments",
+    title: 'Agendamentos',
+    url: '/appointments',
     icon: CalendarDays,
   },
   {
-    title: "Médicos",
-    url: "/doctors",
+    title: 'Profissionais',
+    url: '/doctors',
     icon: Stethoscope,
   },
   {
-    title: "Pacientes",
-    url: "/patients",
+    title: 'Pacientes',
+    url: '/patients',
     icon: UsersRound,
   },
-];
+]
 
 export function AppSidebar() {
-  const router = useRouter();
-  const session = authClient.useSession();
-  const pathname = usePathname();
+  const router = useRouter()
+  const session = authClient.useSession()
+  const pathname = usePathname()
 
   const handleSignOut = async () => {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.push("/authentication");
+          router.push('/authentication')
         },
       },
-    });
-  };
+    })
+  }
   return (
     <Sidebar>
       <SidebarHeader className="border-b p-4">
-        <Image src="/logo.svg" alt="Doutor Agenda" width={136} height={28} />
+        <Image src="/logo.svg" alt="Nutri Agenda" width={136} height={28} />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -95,24 +95,35 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Outros</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
+                <div>
+                  <p className="text-sm">{session.data?.user?.clinic?.name}</p>
+                  <p className="text-muted-foreground text-sm">
+                    {session.data?.user.email}
+                  </p>
+                </div>
+                {/*
                 <SidebarMenuButton
                   asChild
                   isActive={pathname === "/subscription"}
                 >
+                  
                   <Link href="/subscription">
                     <Gem />
                     <span>Assinatura</span>
                   </Link>
+                 
+
                 </SidebarMenuButton>
+            */}
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -120,16 +131,8 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton size="lg">
                   <Avatar>
-                    <AvatarFallback>F</AvatarFallback>
+                    <AvatarFallback>Sair</AvatarFallback>
                   </Avatar>
-                  <div>
-                    <p className="text-sm">
-                      {session.data?.user?.clinic?.name}
-                    </p>
-                    <p className="text-muted-foreground text-sm">
-                      {session.data?.user.email}
-                    </p>
-                  </div>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
@@ -143,5 +146,5 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
-  );
+  )
 }
